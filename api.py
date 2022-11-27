@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, flash
+from flask_sqlalchemy import SQLAlchemy
 
 
 class Curso:
@@ -17,6 +18,17 @@ list_cursos = [curso1, curso2, curso3, curso4, curso5]
 
 app = Flask(__name__)
 app.secret_key = '@admin9876'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = \
+    '{SGBD}://{usuario}:{senha}@{servidor}/{databse}'.format(
+        SGDB='mysql+mysqlconnector',
+        usuario='root',
+        senha='admin',
+        servidor='localhost',
+        database='cursos'
+)
+
+db = SQLAlchemy(app)
 
 
 @app.route('/')
