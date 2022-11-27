@@ -31,6 +31,23 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
 db = SQLAlchemy(app)
 
 
+class Cursos(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nome = db.Column(db.String(50), nullable=False)
+    duracao = db.Column(db.String(40), nullable=False)
+
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
+
+class adm(db.Model):
+    nome = db.Column(db.String(20), nullable=False)
+    senha = db.Column(db.String(100), nullable=False)
+
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
+
 @app.route('/')
 def index():
     return render_template('cursos.html', titulo='Cursos:', cursos=list_cursos)
