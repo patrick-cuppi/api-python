@@ -2,26 +2,12 @@ from flask import Flask, render_template, request, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
 
 
-class Curso:
-    def __init__(self, nome, duracao):
-        self.nome = nome
-        self.duracao = duracao
-
-
-curso1 = Curso('HTML+CSS', '20h')
-curso2 = Curso('JavaScript Completo', '40h')
-curso3 = Curso('React', '16h')
-curso4 = Curso('Python', '40h')
-curso5 = Curso('AWS', '16h')
-
-list_cursos = [curso1, curso2, curso3, curso4, curso5]
-
 app = Flask(__name__)
 app.secret_key = '@admin9876'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = \
-    '{SGBD}://{usuario}:{senha}@{servidor}/{databse}'.format(
-        SGDB='mysql+mysqlconnector',
+    '{SGBD}://{usuario}:{senha}@{servidor}/{database}'.format(
+        SGBD='mysql+mysqlconnector',
         usuario='root',
         senha='admin',
         servidor='localhost',
@@ -40,22 +26,23 @@ class Cursos(db.Model):
         return '<Name %r>' % self.name
 
 
-class adm(db.Model):
-    nome = db.Column(db.String(20), nullable=False)
-    senha = db.Column(db.String(100), nullable=False)
-
-    def __repr__(self):
-        return '<Name %r>' % self.name
+# class adm(db.Model):
+#    nome = db.Column(db.String(20), nullable=False)
+#    senha = db.Column(db.String(100), nullable=False)
+#
+#    def __repr__(self):
+#        return '<Name %r>' % self.name
 
 
 @app.route('/')
 def index():
-    return render_template('cursos.html', titulo='Cursos:', cursos=list_cursos)
+    lista = Cursos.query.order_by(Cursos.id)
+    return render_template('cursos.html', titulo='Cursos:', cursos=lista)
 
 
 @app.route('/cadastro')
 def cadastro():
-    if 'admin_logado' not in session or session['admin_logado'] == None:
+    if 'admin_logado' not in session:
         return redirect('/login?proxima=cadastro')
     return render_template('cadastro.html', titulo='Novo Curso')
 
@@ -64,8 +51,14 @@ def cadastro():
 def criar():
     nome = request.form['nome']
     duracao = request.form['duracao']
-    curso = Curso(nome, duracao)
-    list_cursos.append(curso)
+    curso = Cursos.query.filter_by(nome=nome).first()
+    if curso:
+        flash('Curso já existente!')
+        return redirect('/')
+    novo_curso = Cursos(nome=nome, duracao=duracao)
+    db.session.add(novo_curso)
+    db.session.commit()
+
     return redirect('/')
 
 
@@ -76,14 +69,14 @@ def login():
 
 
 @app.route('/autenticar', methods=['POST', ])
-def autemticacao():
-    if '@admin1234' == request.form['senha'] and 'admin' == request.form['usuario']:
+def autenticacao():
+    if 'admin' == request.form['senha']:
         session['admin_logado'] = request.form['usuario']
-        flash(session['admin_logado'] + ' logado com sucesso!')
+        flash(request.form['usuario'] + ' logado com sucesso!')
         proxima_pagina = request.form['proxima']
         return redirect('/{}'.format(proxima_pagina))
     else:
-        flash('Dados incorretos!')
+        flash('Usuário não logado.')
         return redirect('/login')
 
 
@@ -94,4 +87,5 @@ def logout():
     return redirect('/')
 
 
-app.run(debug=True)
+if __name__ == '__main__':
+    app.run(debug=True)

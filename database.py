@@ -31,12 +31,12 @@ TABLES['Cursos'] = ('''
       PRIMARY KEY (`id`)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
 
-TABLES['adm'] = ('''
-      CREATE TABLE `adm` (
-      `nome` varchar(20) NOT NULL,
-      `senha` varchar(100) NOT NULL,
-      PRIMARY KEY (`nome`)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
+# TABLES['adm'] = ('''
+#      CREATE TABLE `adm` (
+#      `nome` varchar(20) NOT NULL,
+#      `senha` varchar(100) NOT NULL,
+#      PRIMARY KEY (`nome`)
+#      ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;''')
 
 for tabela_nome in TABLES:
     tabela_sql = TABLES[tabela_nome]
@@ -52,19 +52,19 @@ for tabela_nome in TABLES:
         print('OK')
 
 
-# inserindo usuarios
-adm_sql = 'INSERT INTO adm (nome, senha) VALUES (%s, %s)'
-usuarios = [
-    ("admin", "@admin1234"),
-]
-cursor.executemany(adm_sql, usuarios)
+# adm
+#adm_sql = 'INSERT INTO adm (nome, senha) VALUES (%s, %s)'
+# adm = [
+#    ("admin", "admin"),
+# ]
+#cursor.executemany(adm_sql, adm)
 
-cursor.execute('select * from cursos.usuarios')
-print(' -------------  Usuários:  -------------')
-for user in cursor.fetchall():
-    print(user[1])
+#cursor.execute('select * from adm')
+#print(' -------------  Usuários:  -------------')
+# for usuario in cursor.fetchall():
+#    print(usuario[0])
 
-# inserindo jogos
+# inserindo cursos
 cursos_sql = 'INSERT INTO cursos (nome, duracao) VALUES (%s, %s)'
 cursos = [
     ('HTML+CSS', '20h'),
@@ -77,10 +77,9 @@ cursor.executemany(cursos_sql, cursos)
 
 cursor.execute('select * from cursos.cursos')
 print(' -------------  Cursos:  -------------')
-for jogo in cursor.fetchall():
-    print(jogo[1])
+for curso in cursor.fetchall():
+    print(curso[1])
 
-# commitando se não nada tem efeito
 conn.commit()
 cursor.close()
 conn.close()
