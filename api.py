@@ -62,6 +62,36 @@ def criar():
     return redirect('/')
 
 
+@app.route('/editar/<int:id>')
+def editar(id):
+    if 'admin_logado' not in session:
+        return redirect('/login?proxima=editar')
+    curso = Cursos.query.filter_by(id=id).first()
+    return render_template('editar.html', titulo='Editando Curso', curso=curso)
+
+
+@app.route('/atualizar', methods=['PUT', ])
+def atualizar():
+    curso = Cursos.query.filter_by(id=request.form['id']).first()
+    curso.nome = request.form['nome']
+    curso.duracao = request.form['duracao']
+
+    db.session.add(curso)
+    db.session.commit()
+    return redirect('/')
+
+
+@app.route('/deletar/<int:id>')
+def deletar(id):
+    if 'admin_logado' not in session:
+        return redirect('/login')
+
+    Cursos.query.filter_by(id=id).delete()
+    db.session.commit()
+    flash('Curso deletado com sucesso!')
+    return redirect('/')
+
+
 @app.route('/login')
 def login():
     proxima = request.args.get('proxima')

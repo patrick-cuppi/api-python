@@ -4,6 +4,7 @@
         <thead class="thead-default">
             <tr>
                 <th>Nossos cursos são:</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -11,6 +12,8 @@
             <tr>
                 <td>{{ curso.nome }}</td>
                 <td>{{ curso.duracao }}</td>
+                <td><a href="{{ url_for('editar', id=curso.id) }}">Editar</a></td>
+                <td><a href="{{ url_for('deletar', id=curso.id) }}">Deletar</a></td>
             </tr>
                 {% endfor %}
         </tbody>
