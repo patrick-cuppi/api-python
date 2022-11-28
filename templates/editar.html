@@ -1,6 +1,6 @@
 {% extends "template.html" %}
 {% block conteudo %}
-    <form action="/atualizar" method="PUT">
+    <form action="/atualizar" method="POST">
         <fieldset>
         <input type="hidden" name="id" value="{{ curso.id }}" >
           <div class="form-group">

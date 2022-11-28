@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, flash
+from flask import Flask, render_template, request, redirect, session, flash, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -43,7 +43,7 @@ def index():
 @app.route('/cadastro')
 def cadastro():
     if 'admin_logado' not in session:
-        return redirect('/login?proxima=cadastro')
+        return redirect(url_for('login', proxima=url_for('cadastro')))
     return render_template('cadastro.html', titulo='Novo Curso')
 
 
@@ -65,12 +65,12 @@ def criar():
 @app.route('/editar/<int:id>')
 def editar(id):
     if 'admin_logado' not in session:
-        return redirect('/login?proxima=editar')
+        return redirect(url_for('login', proxima=url_for('cadastro')))
     curso = Cursos.query.filter_by(id=id).first()
     return render_template('editar.html', titulo='Editando Curso', curso=curso)
 
 
-@app.route('/atualizar', methods=['PUT', ])
+@app.route('/atualizar', methods=['POST', ])
 def atualizar():
     curso = Cursos.query.filter_by(id=request.form['id']).first()
     curso.nome = request.form['nome']
